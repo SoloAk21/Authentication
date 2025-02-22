@@ -1,6 +1,6 @@
 // auth.controller.js
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+
 import User from "../models/user.model.js";
 import {
   sendPasswordResetEmail,
@@ -118,6 +118,7 @@ export const resendVerification = async (req, res, next) => {
   }
 };
 // User Login
+
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -131,37 +132,46 @@ export const login = async (req, res, next) => {
 
     // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log(isMatch);
-
     if (!isMatch) {
       return next(errorHandler(400, "Invalid credentials"));
     }
 
-    // Generate JWT Token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    // Generate tokens
+    const { accessToken, refreshToken } = generateTokens(user._id);
 
-    // Set cookie
-    res.cookie("token", token, {
+    // Save refresh token to the database
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    // Set cookies
+    res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
-      maxAge: 3600000, // 1 hour
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     // Update last login time
     user.lastLogin = new Date();
     await user.save();
 
-    res
-      .status(200)
-      .json({ success: true, message: "Login successful", token, user });
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      accessToken,
+      refreshToken,
+    });
   } catch (error) {
     next(errorHandler(500, error.message || "Internal Server Error"));
   }
 };
-
 // Forgot Password
 export const forgotPassword = async (req, res, next) => {
   try {

@@ -44,7 +44,12 @@ function ResetPasswordPage() {
       }, 3000);
     } catch (error) {
       setSuccess(false);
-      setAlertMessage(error.response?.data?.message || "An error occurred");
+      setAlertMessage(
+        error.response?.data?.message ||
+          error.response.data ||
+          error.response.data ||
+          "Something wennt wrong"
+      );
     } finally {
       setLoading(false);
     }

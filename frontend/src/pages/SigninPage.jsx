@@ -84,8 +84,11 @@ function SigninPage() {
       login(); // Call the login function to update authentication state
       navigate("/profile"); // Redirect to the protected route
     } catch (error) {
-      console.log(error);
-      const errorMsg = error.response?.data?.message || "An error occurred";
+      console.log();
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response.data ||
+        "Something went wrong";
       setAlertMessage(errorMsg);
       setSuccess(false);
     } finally {

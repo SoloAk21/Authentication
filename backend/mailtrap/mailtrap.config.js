@@ -1,9 +1,8 @@
 import nodemailer from "nodemailer";
 import { MailtrapTransport } from "mailtrap";
 import dotenv from "dotenv";
-import { errorHandler } from "../utils/errorHandler.js";
-
 dotenv.config();
+import { errorHandler } from "../utils/errorHandler.js";
 
 const createTransport = () => {
   try {

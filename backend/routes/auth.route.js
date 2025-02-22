@@ -12,18 +12,26 @@ import passport from "passport";
 import jwt from "jsonwebtoken"; // Import jwt
 import { errorHandler } from "../utils/errorHandler.js"; // Import errorHandler
 import { verifyAuth } from "../middlewares/verifyAuth.middleware.js";
+import {
+  loginLimiter,
+  passwordResetLimiter,
+} from "../middlewares/rateLimiter.middleware.js";
 
 const router = express.Router();
 
 // Regular authentication routes
 router.post("/signup", register);
-router.post("/login", login);
+router.post("/login", loginLimiter, login);
 router.post("/logout", logout);
 
 // Email verification and password reset routes
 router.post("/verify-email", verifyEmail);
 router.post("/forgot-password", forgotPassword);
-router.post("/reset-password/:userId/:token", resetPassword);
+router.post(
+  "/reset-password/:userId/:token",
+  passwordResetLimiter,
+  resetPassword
+);
 router.post("/resend-verification", resendVerification);
 
 // Google OAuth login route
