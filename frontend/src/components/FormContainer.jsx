@@ -5,7 +5,7 @@ const FormContainer = ({ children, onSubmit, title, subtitle }) => {
     <section class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 py-4 shadow-lg">
         <h1 className="text-2xl font-bold text-white bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-500 animate-text">
-          SoloAk Authentication
+          SoloAk Auth
         </h1>
       </div>
       <div className="container flex items-center justify-center mt-16 px-6 mx-auto">
